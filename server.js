@@ -92,12 +92,10 @@ app.get('/weather', (request, response, next) => {
   }
 });
 
-
 // *** CATCH ALL ENDPOINT SHOULD BE THE LAST DEFINED ***
 app.get('*', (request, response) => {
   response.status(404).send('This page does not exist');
 });
-
 
 // **** ERROR HANDLING - PLUG AND PLAY CODE FROM EXPRESS DOCS ****
 app.use((error, request, response, next) => {
