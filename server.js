@@ -3,7 +3,7 @@
 const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
-let data = require('./data/petdata');
+//let data = require('./data/petdata');
 let weatherData = require('./data/weather');
 const axios = require('axios');
 
