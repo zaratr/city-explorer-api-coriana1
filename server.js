@@ -71,6 +71,28 @@ app.get('/movies', async (request, response, next) => {
   }
 });
 
+app.get('/photos', async (request, response, next) => {
+  try {
+
+    //generate variable for key value inside the query
+    let myLocalCity = request.query.city;
+
+    //url for the api to be queried
+    let url = `https://api.unsplash.com/search/photos?client_id=${process.env.UNSPLASH_API_KEY}&query=${myLocalCity}`;
+    let photosFromAxios = await axios.get(url);
+
+    //the data will have to be mapped through every object in the class
+    //loops through an array of objects and creates a Photo object based only on the needed info from the data
+    //whereError.errorPrinter(photosFromAxios.data.results[0].urls.regular)
+    let dataToSend = photosFromAxios.data.results.map((obj => new Photo(obj)));
+    response.status(200).send(dataToSend);
+  } catch (error) {
+    next(error);
+  }
+});
+
+
+
 
 //NOTE:this * will catch all of the bad links that do not exist, this function needs to be at the end of the file
 app.get('*', (request, response) => {
@@ -155,25 +177,6 @@ class Weather {
 // }
 
 //TODO: Photo end point
-app.get('/photos', async (request, response, next) => {
-  try {
-
-    //generate variable for key value inside the query
-    let myLocalCity = request.query.city;
-
-    //url for the api to be queried
-    let url = `https://api.unsplash.com/search/photos?client_id=${process.env.UNSPLASH_API_KEY}&query=${myLocalCity}`;
-    let photosFromAxios = await axios.get(url);
-
-    //the data will have to be mapped through every object in the class
-    //loops through an array of objects and creates a Photo object based only on the needed info from the data
-    let dataToSend = photosFromAxios.data.results.map((obj = new Photo(obj)));
-    response.status(200).send(dataToSend);
-  } catch (error) {
-    next(error);
-  }
-});
-
 class Photo {
   constructor(picObj) {
     this.src = picObj.urls.regular;
