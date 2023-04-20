@@ -1,3 +1,4 @@
+//--------------------------------  START SETUP ----------------------------//
 'use strict';
 
 const express = require('express');
@@ -15,7 +16,11 @@ app.use(cors());
 
 // Selects port for the application from env or selects 3002 if original is not available
 const PORT = process.env.PORT || 3002;
-app.listen(PORT, () => console.log(`We are up on ${PORT}`));
+
+//I created a easy console logger
+const whereError = require('./error_finder/errorFinder.js');
+
+//--------------------------------  END SETUP ----------------------------//
 
 //  end points
 app.get('/', (request, response) => {
@@ -49,6 +54,45 @@ app.get('/weather', async (request, response, next) => {
     next(error);
   }
 });
+
+app.get('/movies', async (request, response, next) => {
+  try {
+    let cityMovieSearch = request.query.city;
+    let myMovieUrl = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${cityMovieSearch}`;
+    let returnedMovies = await axios.get(myMovieUrl);
+    let dataToSend = returnedMovies.data.results.map(
+      (obj) => new MovieforCity(obj)
+    );
+    console.log('this works=====================================');
+    console.log('===============================================');
+    response.status(200).send(dataToSend);
+  } catch (error) {
+    next(error);
+  }
+});
+
+
+//NOTE:this * will catch all of the bad links that do not exist, this function needs to be at the end of the file
+app.get('*', (request, response) => {
+  response.status(404).send('This page does not exist');
+});
+
+//This also lives at the bottom of the page handles errors read docs from express
+app.use((error, request, response, next) => {
+  console.log(error.message);
+  response.status(500).send(error.message);
+});
+
+
+
+class MovieforCity {
+  constructor(movieObj) {
+    this.id = movieObj.id;
+    this.image = `https://image.tmdb.org/t/p/w500/${movieObj.poster_path}`;
+    this.title = movieObj.title;
+  }
+}
+
 
 class Weather {
   constructor(weatherObj) {
@@ -89,29 +133,7 @@ class Weather {
     }, []);
   }
 }
-app.get('/movies', async (request, response, next) => {
-  try {
-    let cityMovieSearch = request.query.city;
-    let myMovieUrl = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${cityMovieSearch}`;
-    let returnedMovies = await axios.get(myMovieUrl);
-    let dataToSend = returnedMovies.data.results.map(
-      (obj) => new MovieforCity(obj)
-    );
-    console.log('this works=====================================');
-    console.log('===============================================');
-    response.status(200).send(dataToSend);
-  } catch (error) {
-    next(error);
-  }
-});
 
-class MovieforCity {
-  constructor(movieObj) {
-    this.id = movieObj.id;
-    this.image = `https://image.tmdb.org/t/p/w500/${movieObj.poster_path}`;
-    this.title = movieObj.title;
-  }
-}
 // app.get('/pet', (request, response, next) => {
 //   try {
 //     //give pet query
@@ -159,21 +181,9 @@ class Photo {
     this.userName = picObj.user.name;
   }
 }
-//NOTE:this * will catch all of the bad links that do not exist, this function needs to be at the end of the file
-app.get('*', (request, response) => {
-  response.status(404).send('This page does not exist');
-});
 
-//This also lives at the bottom of the page handles errors read docs from express
-app.use((error, request, response, next) => {
-  console.log(error.message);
-  response.status(500).send(error.message);
-});
 //to start nodemon in the console
-
-
-
-
+app.listen(PORT, () => console.log(`We are up on ${PORT}`));
 
 
 
