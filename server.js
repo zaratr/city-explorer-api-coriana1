@@ -118,9 +118,9 @@ class MovieforCity {
 
 class Weather {
   constructor(weatherObj) {
-    (this.cityName = weatherObj.city_name),
-      (this.lattitude = weatherObj.lon),
-      (this.longitude = weatherObj.lat);
+    this.cityName = weatherObj.city_name;
+    this.lattitude = weatherObj.lon;
+    this.longitude = weatherObj.lat;
     this.data = weatherObj.data;
 
   }
@@ -133,6 +133,8 @@ class Weather {
         allweather.push({
           description: `Low of ${dayweather.lowtemp}, high of ${dayweather.hightemp} with ${dayweather.description}`,
           date: dayweather.date,
+          lat: this.lattitude,
+          lon: this.longitude
         });
         return allweather;
       },
