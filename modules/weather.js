@@ -1,5 +1,5 @@
 'use strict';
-const axios = require('axios')
+const axios = require('axios');
 let cache = require('./cache.js');
 
 function getFWeather(latitude, longitude) {

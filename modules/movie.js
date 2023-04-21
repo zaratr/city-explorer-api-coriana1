@@ -22,7 +22,7 @@ function getMovie(city) {
 function parseMovie(movieData) {
   try {
     let array_movieData = movieData.data.results.map(eachObj => {
-      const { title, overview, vote_average, vote_count, backdrop_path, popularity, release_date } = eachObj
+      const { title, overview, vote_average, vote_count, backdrop_path, popularity, release_date } = eachObj;
       return new Movie(
         title,
         overview,
@@ -46,7 +46,7 @@ class Movie {
     this.overview = overview,
     this.average_votes = average_votes,
     this.total_votes = total_votes,
-    this.image_url = "https://image.tmdb.org/t/p/w500" + image_url,
+    this.image_url = 'https://image.tmdb.org/t/p/w500' + image_url,
     this.popularity = popularity,
     this.release_on = release_on;
   }
