@@ -28,6 +28,7 @@ function weatherHandler(request, response) {
 
 function currWeatherHandler(request, response) {
   const { lat, lon } = request.query;
+
   weather.getCurrWeather(lat,lon)
     .then(summaries => response.send(summaries))
     .catch((error) => {

@@ -16,6 +16,7 @@ function getMovie(city) {
     cache[key].data = axios.get(url)
       .then(response => parseMovie(response));
   }
+  //console.log("moviehere>", cache[key].data, "<moviehere");
   return cache[key].data;
 }
 

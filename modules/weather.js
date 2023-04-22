@@ -10,14 +10,16 @@ function getFWeather(latitude, longitude) {
   if (cache[key] && (Date.now() - cache[key].timestamp < setTime)) {
     //Cache => around 2 minutes
     console.log('Cache hit');
+    return Promise.resolve(cache[key].data);
   } else {
     console.log('Cache miss');
     cache[key] = {};
     cache[key].timestamp = Date.now();
-    cache[key].data = axios.get(url)
+    return axios.get(url)
       .then(response => parseWeather(response))
+      .then(fWeather => {cache[key].data = fWeather; return fWeather})
+      .catch(e => Promise.reject(e));
   }
-  return cache[key].data;
 }
 
 function parseWeather(weatherData) {
@@ -33,10 +35,29 @@ function parseWeather(weatherData) {
   }
 }
 
+function getCurrWeather1(latitude, longitude) {
+  const key = 'currweather-' + latitude + longitude;
+
+  const url = `https://api.weatherbit.io/v2.0/current?key=${process.env.WEATHERBIT_API}&lat=${latitude}&lon=${longitude}`;
+  if (cache[key] && (Date.now() - cache[key].timestamp < 300000)) {
+    //Cache => around 2 minutes
+    console.log('Cache hit');
+    return Promise.resolve(cache[key].data);
+  } else {
+    console.log('Cache miss');
+    cache[key] = {};
+    cache[key].timestamp = Date.now();
+
+    return axios.get(url)
+      .then(response => parseCurrWeather(response))
+      .then(currWeather => {cache[key].data = currWeather; return currWeather;})
+      .catch(e => Promise.reject(e))
+  }
+}
 function getCurrWeather(latitude, longitude) {
   const key = 'currweather-' + latitude + longitude;
-  const url = `https://api.weatherbit.io/v2.0/current?key=${process.env.WEATHERBIT_API}&lat=${latitude}&lon=${longitude}`;
 
+  const url = `https://api.weatherbit.io/v2.0/current?key=${process.env.WEATHERBIT_API}&lat=${latitude}&lon=${longitude}`;
   if (cache[key] && (Date.now() - cache[key].timestamp < 300000)) {
     //Cache => around 2 minutes
     console.log('Cache hit');
@@ -45,10 +66,14 @@ function getCurrWeather(latitude, longitude) {
     cache[key] = {};
     cache[key].timestamp = Date.now();
     cache[key].data = axios.get(url)
-      .then(response => parseCurrWeather(response))
+      .then(response => {
+        parseCurrWeather(response)
+      })
   }
   return cache[key].data;
 }
+
+
 
 function parseCurrWeather(weatherData) {
   try {
@@ -58,9 +83,11 @@ function parseCurrWeather(weatherData) {
       weatherData.data.data[0].rh,
       weatherData.data.data[0].weather.description
     )
+    console.log("currweather>", currWeatherSummaries, "<currweather");
 
     return Promise.resolve(currWeatherSummaries);
   } catch (e) {
+    console.log("error for curr weather");
     return Promise.reject(e);
   }
 }

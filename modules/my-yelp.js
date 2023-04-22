@@ -23,7 +23,7 @@ const getYelpData = async (lat, lon) => {
         Authorization: `Bearer ${process.env.YELP_API_KEY}`,
       }
     });
-    console.log('weather data', weatherData.data.businesses);
+    //console.log('weather data', weatherData.data.businesses);
     // console.log('RES HERE', res);
     // .then((response) => {
     //   return response.data.businesses;
