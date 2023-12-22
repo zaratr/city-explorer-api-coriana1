@@ -23,7 +23,7 @@ jobs:
         working-directory: ./python
       - name: Uninstall Python
         run: |
-          sudo apt-get remove --purge -y python*
+          sudo apt-get remove --purge -y python* libpython*
           sudo apt-get autoremove -y
       - name: Check Python version
         run: |
