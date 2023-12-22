@@ -1,5 +1,5 @@
 def main():
-  return "hello world"
+  return "hello world!"
 
 if __name__== "__main__":
   print(main())
